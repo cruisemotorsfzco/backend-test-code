@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateUserDto, UpdateUserDto } from './dto';
+import { UpdateUserDto } from './dto';
 import { UsersRepository } from './users.repository';
 import { USER_MESSAGES } from './constants/user.messages';
 import { LoggerService } from '../logger/logger.service';
@@ -11,23 +11,6 @@ export class UsersService {
     private usersRepository: UsersRepository,
     private logger: LoggerService,
   ) { }
-
-  /**
-   * Create a new user with hashed password
-   */
-  async create(createUserDto: CreateUserDto) {
-    this.logger.log('Creating new user', { email: createUserDto.email });
-
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-
-    const user = await this.usersRepository.create({
-      ...createUserDto,
-      password: hashedPassword,
-    });
-
-    this.logger.log('User created successfully', { userId: user.id, email: user.email });
-    return user;
-  }
 
   /**
    * Get all users from the database

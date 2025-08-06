@@ -1,13 +1,25 @@
 # Blog API
 
-A comprehensive Blog API built with NestJS and Prisma, implementing Phase 1 functionality with modern development practices.
-
 ## Features
+
+### Phase 1: Core CRUD + Database
 - **User Management**: CRUD operations for users with password hashing
 - **Post Management**: CRUD operations for blog posts
 - **Relationships**: Posts are linked to their authors (users)
-- **API Documentation**: Swagger/OpenAPI documentation available at `/docs`
 - **Database**: PostgreSQL with Prisma ORM
+- **UUID Primary Keys**: Secure UUID-based identifiers
+- **Repository Pattern**: Clean separation of data access and business logic
+- **Structured Logging**: Comprehensive logging with request tracing
+- **API Documentation**: Swagger/OpenAPI documentation available at `/docs`
+
+### Phase 2: Authentication + RBAC
+- **JWT Authentication**: Secure token-based authentication
+- **Role-Based Access Control**: User and Admin roles with granular permissions
+- **Route Protection**: Guards for protected endpoints
+- **Post Ownership**: Users can only modify their own posts
+- **Admin Privileges**: Admins can manage all users and posts
+- **Password Security**: Bcrypt password hashing
+- **Token Management**: 24-hour JWT token expiration
 
 ## Prerequisites
 
@@ -32,18 +44,22 @@ A comprehensive Blog API built with NestJS and Prisma, implementing Phase 1 func
    Create a `.env` file in the root directory:
    ```env
    DATABASE_URL="postgresql://postgres:password@localhost:5432/blog_api?schema=public"
+   JWT_SECRET="your-super-secret-jwt-key-here"
    PORT=3001
    ```
    
-   Update the DATABASE_URL with your PostgreSQL credentials.
+   Update the DATABASE_URL with your PostgreSQL credentials and set a strong JWT_SECRET.
 
 4. **Database Setup**
    ```bash
    # Generate Prisma client
-   npx prisma generate
+   npm run prisma:generate
    
-   # Run database migrations
-   npx prisma migrate dev --name init
+   # Push schema to database (creates tables)
+   npm run prisma:db:push
+   
+   # Alternative: Run migrations (requires shadow database permissions)
+   npm run prisma:migrate
    ```
 
 5. **Start the application**
@@ -56,43 +72,50 @@ A comprehensive Blog API built with NestJS and Prisma, implementing Phase 1 func
    npm run start:prod
    ```
 
-## API Endpoints
-
-### Users
-- `POST /users` - Create a new user
-- `GET /users` - Get all users
-- `GET /users/:id` - Get user by ID
-- `PATCH /users/:id` - Update user
-- `DELETE /users/:id` - Delete user
-
-### Posts
-- `POST /posts` - Create a new post
-- `GET /posts` - Get all posts with their authors
-- `GET /posts/:id` - Get post by ID with author
-- `PATCH /posts/:id` - Update post
-- `DELETE /posts/:id` - Delete post
-
 ## API Documentation
 
 Visit `http://localhost:3001/docs` to view the interactive API documentation.
 
+## Authentication & Authorization
+
+### User Roles
+- **`USER`** - Regular users (default role)
+- **`ADMIN`** - Administrative users with full access
+
+### Access Control
+- **Public Endpoints**: Post listing and viewing
+- **Authenticated Endpoints**: Post creation, user profile
+- **Role-Based Endpoints**: User management (Admin only)
+- **Ownership-Based Endpoints**: Post modification (author or Admin only)
+
+### JWT Token Usage
+```bash
+# Include in request headers
+Authorization: Bearer <your-jwt-token>
+```
+
 ## Database Schema
 
 ### User
-- `id` (Primary Key)
-- `name` (String)
-- `email` (String, Unique)
-- `password` (String, Hashed)
-- `createdAt` (DateTime)
-- `updatedAt` (DateTime)
+- `id` (UUID, Primary Key) - Auto-generated UUID
+- `name` (String) - User's full name
+- `email` (String, Unique) - User's email address
+- `password` (String) - Hashed password using bcrypt
+- `role` (Role) - User role (USER/ADMIN)
+- `createdAt` (DateTime) - Record creation timestamp
+- `updatedAt` (DateTime) - Record last update timestamp
 
 ### Post
-- `id` (Primary Key)
-- `title` (String)
-- `content` (String)
-- `userId` (Foreign Key to User)
-- `createdAt` (DateTime)
-- `updatedAt` (DateTime)
+- `id` (UUID, Primary Key) - Auto-generated UUID
+- `title` (String) - Post title
+- `content` (String) - Post content/body
+- `userId` (UUID, Foreign Key) - References User.id with cascade delete
+- `createdAt` (DateTime) - Record creation timestamp
+- `updatedAt` (DateTime) - Record last update timestamp
+
+### Role Enum
+- `USER` - Regular user role
+- `ADMIN` - Administrative role
 
 ## Testing
 
@@ -126,6 +149,12 @@ npm run prisma:db:pull     # Pull database schema to Prisma schema
 
 ## Architecture
 
+### Authentication & Authorization
+- **JWT Strategy**: Token-based authentication
+- **Local Strategy**: Username/password validation
+- **Role Guards**: Role-based access control
+- **Ownership Guards**: Resource ownership validation
+
 ### Repository Pattern
 - **Repository Layer**: Handles all database operations
 - **Service Layer**: Contains business logic and validation
@@ -142,3 +171,23 @@ npm run prisma:db:pull     # Pull database schema to Prisma schema
 - Foreign key validation for relationships
 - Input validation with custom error messages
 - Password hashing for security
+- JWT token validation
+
+## Error Handling
+
+### HTTP Status Codes
+- **200 OK**: Successful operation
+- **201 Created**: Resource created successfully
+- **400 Bad Request**: Invalid input data or validation error
+- **401 Unauthorized**: Missing or invalid JWT token
+- **403 Forbidden**: Insufficient permissions (role/ownership)
+- **404 Not Found**: Resource not found
+- **409 Conflict**: Resource already exists (e.g., duplicate email)
+
+### Security Features
+- **Password Hashing**: All passwords hashed with bcrypt
+- **JWT Tokens**: Secure token-based authentication with 24-hour expiration
+- **Role-Based Access**: Granular permissions based on user roles
+- **Resource Ownership**: Users can only modify their own posts
+- **Input Validation**: Comprehensive validation for all inputs
+- **UUID Security**: Secure UUID-based identifiers instead of sequential IDs

@@ -10,7 +10,7 @@ export const POST_MESSAGES = {
     ERROR: {
         SOMETHING_WENT_WRONG: 'Something went wrong',
         UNAUTHORIZED: 'Unauthorized access to this post',
-        USER_NOT_FOUND: 'Author not found for this post',
+        USER_NOT_FOUND: 'User not found for this post',
     },
     VALIDATION: {
         INVALID_TITLE: 'Title is required',

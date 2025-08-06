@@ -1,27 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateUserDto } from './dto';
+
 import { UpdateUserDto } from './dto';
 
 @Injectable()
 export class UsersRepository {
   constructor(private prisma: PrismaService) {}
-
-  /**
-   * Create a new user in the database
-   */
-  async create(data: CreateUserDto & { password: string }) {
-    return this.prisma.user.create({
-      data,
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
-  }
 
   /**
    * Get all users from the database
@@ -32,6 +16,7 @@ export class UsersRepository {
         id: true,
         name: true,
         email: true,
+        role: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -48,6 +33,7 @@ export class UsersRepository {
         id: true,
         name: true,
         email: true,
+        role: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -74,6 +60,7 @@ export class UsersRepository {
         id: true,
         name: true,
         email: true,
+        role: true,
         createdAt: true,
         updatedAt: true,
       },

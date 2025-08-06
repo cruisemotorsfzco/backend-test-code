@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { CommonModule } from './common/common.module';
 import { LoggerModule } from './logger/logger.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -14,10 +15,11 @@ import { LoggerModule } from './logger/logger.module';
       isGlobal: true,
     }),
     PrismaModule,
-    UsersModule,
-    PostsModule,
     CommonModule,
     LoggerModule,
+    AuthModule,
+    UsersModule,
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

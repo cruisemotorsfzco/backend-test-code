@@ -17,4 +17,9 @@ export class UpdateUserDto {
   @IsString()
   @MinLength(6)
   password?: string;
+
+  @ApiProperty({ example: 'USER', description: 'The role of the user', enum: ['USER', 'ADMIN'], required: false })
+  @IsOptional()
+  @IsString()
+  role?: 'USER' | 'ADMIN';
 } 
