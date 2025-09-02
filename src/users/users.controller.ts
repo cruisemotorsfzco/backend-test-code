@@ -13,8 +13,8 @@ import { Role } from 'src/shared/enums/user-roles.enum';
 export class UsersController {
     constructor(private readonly usersService: UsersService) { }
 
-    @UseGuards(JwtAuthGuard)
-    @ApiBearerAuth()
+    // @UseGuards(JwtAuthGuard)
+    // @ApiBearerAuth()
     @Post()
     @ApiOperation({ summary: 'Create a new user' })
     @ApiResponse({ status: 201, description: 'The user has been created.' })
