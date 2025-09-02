@@ -209,4 +209,45 @@ export class PostsService {
             throw new InternalServerErrorException(error.message);
         }
     }
+
+    /**
+     * Publish a post + create a notification in a transaction.
+     */
+    async publishPost(postId: string, userId: string) {
+        try {
+            // ✅ Fetch the post and check if the user is the author
+            const post = await this.prisma.post.findUnique({ where: { id: postId } });
+            if (!post) throw new NotFoundException(`Post with ID ${postId} not found`);
+            if (post.userId !== userId) throw new ForbiddenException(`You are not the author of this post`);
+
+            // ✅ Start transaction
+            const [updatedPost, notification] = await this.prisma.$transaction([
+                this.prisma.post.update({
+                    where: { id: postId },
+                    data: { published: true }, // mark as published
+                }),
+                this.prisma.notification.create({
+                    data: {
+                        userId, // who will get the notification
+                        postId,
+                        message: `Your post "${post.title}" has been published successfully`,
+                    },
+                }),
+            ]);
+
+            return {
+                post: updatedPost,
+                notification,
+            };
+        } catch (error) {
+            if (
+                error instanceof NotFoundException ||
+                error instanceof ForbiddenException
+            ) throw error;
+
+            throw new InternalServerErrorException(
+                `Failed to publish post: ${error.message}`
+            );
+        }
+    }
 }
