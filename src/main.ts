@@ -11,10 +11,19 @@ async function bootstrap() {
     .setDescription('API documentation for Blog project')
     .setVersion('1.0')
     .addTag('users')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+      'bearer', // 👈 MUST match name used in @ApiBearerAuth
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+
 
   await app.listen(process.env.PORT || 3000);
   console.log(`🚀 Server running on http://localhost:${process.env.PORT || 3000}`);
