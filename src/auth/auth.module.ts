@@ -6,6 +6,7 @@ import { PrismaService } from 'prisma/prisma.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategy/jwt.strategy';
+import { RolesGuard } from './strategy/roles.guard';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { JwtStrategy } from './strategy/jwt.strategy';
       signOptions: { expiresIn: process.env.JWT_EXPIRES_IN || '3600s' },
     }),
   ],
-  providers: [AuthService, JwtStrategy, PrismaService], // JwtStrategy must be here
+  providers: [AuthService, JwtStrategy, PrismaService],
   controllers: [AuthController],
   exports: [AuthService],
 })

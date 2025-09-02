@@ -24,8 +24,8 @@ export class PostsController {
         return this.postsService.create(dto, user.userId);
     }
 
-    @UseGuards(JwtAuthGuard)
-    // @Roles(Role.ADMIN, Role.USER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN, Role.USER)
     @ApiBearerAuth()
     @Get()
     @ApiOperation({ summary: 'Get all posts (with author)' })
@@ -34,8 +34,8 @@ export class PostsController {
         return this.postsService.findAll();
     }
 
-    @UseGuards(JwtAuthGuard)
-    // @Roles(Role.ADMIN, Role.USER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN, Role.USER)
     @ApiBearerAuth()
     @Get(':id')
     @ApiOperation({ summary: 'Get a post by ID' })
@@ -44,8 +44,8 @@ export class PostsController {
         return this.postsService.findOne(id);
     }
 
-    @UseGuards(JwtAuthGuard)
-    // @Roles(Role.ADMIN, Role.USER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN, Role.USER)
     @ApiBearerAuth()
     @Patch(':id')
     @ApiOperation({ summary: 'Update a post by ID' })
@@ -54,8 +54,8 @@ export class PostsController {
         return this.postsService.update(id, dto, req.user.userId);
     }
 
-    @UseGuards(JwtAuthGuard)
-    // @Roles(Role.ADMIN, Role.USER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN, Role.USER)
     @ApiBearerAuth()
     @Delete(':id')
     @ApiOperation({ summary: 'Delete a post by ID' })

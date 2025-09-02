@@ -4,6 +4,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/strategy/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/strategy/roles.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { Role } from 'src/shared/enums/user-roles.enum';
 
 @ApiTags('users')
 @Controller('users')
@@ -37,7 +40,8 @@ export class UsersController {
         return this.usersService.findOne(id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
     @ApiBearerAuth()
     @Patch(':id')
     @ApiOperation({ summary: 'Update a user by ID' })
@@ -46,7 +50,8 @@ export class UsersController {
         return this.usersService.update(id, dto);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
     @ApiBearerAuth()
     @Delete(':id')
     @ApiOperation({ summary: 'Delete a user by ID' })
