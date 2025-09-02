@@ -111,4 +111,14 @@ export class PostsController {
     ) {
         return this.postsService.removeComment(postId, commentId, req.user.userId);
     }
+
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN, Role.USER)
+    @ApiBearerAuth()
+    @Patch(':id/publish')
+    @ApiOperation({ summary: 'Publish a post and create notification' })
+    @ApiResponse({ status: 200, description: 'Post published successfully with notification' })
+    publish(@Param('id') id: string, @Req() req: any) {
+        return this.postsService.publishPost(id, req.user.userId);
+    }
 }
